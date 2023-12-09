@@ -25,5 +25,5 @@ plugins/__pycache__/status.cpython-39.pyc
 plugins/__pycache__/main.cpython-39.pyc
 plugins/ba_query/__pycache__/main.cpython-39.pyc
 plugins/ba_query/__pycache__/core.cpython-39.pyc
-
 plugins/ba_query/utils/__pycache__/request_cache.cpython-39.pyc
+__init__.py
