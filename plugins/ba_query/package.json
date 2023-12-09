@@ -1,0 +1,13 @@
+{
+  "name": "ba_query",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dec": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
