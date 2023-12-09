@@ -1,5 +1,5 @@
 from typing import List
-from utils.request_cache import RequestCache
+from .utils.request_cache import RequestCache
 
 # same as ListTopData but a little bit different at labelInfo
 class ListByLastRankData:
