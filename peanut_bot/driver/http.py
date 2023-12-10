@@ -142,7 +142,35 @@ class QOpenApi(HTTPDriver):
         rpl = await self.post_async(data,fix)
         logging.debug(rpl)
         return rpl
-            
+
+    async def get_img_info(self,group_openid: str,fileurl) -> dict:
+        fix = f'/v2/groups/{group_openid}/files'
+        data = {
+            "file_type": 1,
+            "url": fileurl,
+            "srv_send_msg": False
+        }
+        logging.debug(f'try to send{json.dumps(data)} to {self.url}{fix}\n with header: {self.headers}')
+        await self.post_async(f'{self.url}{fix}')
+        rpl = await self.post_async(data,fix)
+        logging.debug(rpl)
+        return rpl
+    
+    async def send_img(self,group_openid,file_info):
+        fix = f'/v2/groups/{group_openid}/messages'
+        data = {"content":' ',
+                "msg_type":7,
+                'msg_id':str(self.latest_message_id),
+                "media": {
+                    "file_info": file_info
+                }
+                }
+        # 调试用的log
+        logging.debug(f'try to send{json.dumps(data)} to {self.url}{fix}\n with header: {self.headers}')
+        await self.post_async(f'{self.url}{fix}')
+        rpl = await self.post_async(data,fix)
+        logging.debug(rpl)
+        return rpl
 
 class API:
     def __init__(self,api) -> None:

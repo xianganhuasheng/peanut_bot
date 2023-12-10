@@ -1,6 +1,6 @@
-peanut_bot/plugins/eat_what.py.unused
-peanut_bot/plugins/jrrp.py.unused
 plugins/ping.py.unable
 __init__.py
 *.pyc
 *.cfg
+plugins/eat_what.py.unused
+plugins/jrrp.py.unused
