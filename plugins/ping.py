@@ -15,10 +15,10 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
     if not isinstance(event,GroupAtMessageEvent):
         return
     try:
-        with open('./plugins/server_ip.json', 'r') as file:
+        with open('plugins/server_ip.json', 'r') as file:
             pass
     except:
-        with open('./plugins/server_ip.json', 'w') as file:
+        with open('plugins/server_ip.json', 'w') as file:
             data = {'default': 'svi.arrowss.top'}
             json.dump(data, file)
     if event.content.startswith(' pinghelp') or event.content.startswith('pinghelp'):
@@ -33,9 +33,9 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
         await api.send(event.group_openid,
                        message=f'{help_message}')
     elif event.content.startswith(' pingset') or event.content.startswith('pingset'):
-        with open('./plugins/server_ip.json', 'r') as file:
+        with open('plugins/server_ip.json', 'r') as file:
             data = json.load(file)
-        with open('./plugins/server_ip.json', 'w') as file:
+        with open('plugins/server_ip.json', 'w') as file:
             data['default'] = event.content.split(" ")[-1]
             json.dump(data, file)
         await api.send(event.group_openid,
@@ -43,7 +43,7 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
     elif event.content.startswith(' pingadd') or event.content.startswith('pingadd'):
         name=event.content.split(" ")[-2]
         ip=event.content.split(" ")[-1]
-        with open('./plugins/server_ip.json', 'r') as file:
+        with open('plugins/server_ip.json', 'r') as file:
             data = json.load(file)
         if name in data:
             await api.send(event.group_openid,
@@ -53,17 +53,17 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
                 await api.send(event.group_openid,
                                message=f'服务器别名违规！')
             else:
-                with open('./plugins/server_ip.json', 'w') as file:
+                with open('plugins/server_ip.json', 'w') as file:
                     data[name] = ip
                     json.dump(data, file)
                 await api.send(event.group_openid,
                                message=f'已将服务器别名{name}添加')
     elif event.content.startswith(' pingdel') or event.content.startswith('pingdel'):
         name = event.content.split(" ")[-1]
-        with open('./plugins/server_ip.json', 'r') as file:
+        with open('plugins/server_ip.json', 'r') as file:
             data = json.load(file)
         if name in data and name != 'default':
-            with open('./plugins/server_ip.json', 'w+') as file:
+            with open('plugins/server_ip.json', 'w+') as file:
                 del data[name]
                 json.dump(data, file)
             await api.send(event.group_openid,
@@ -72,24 +72,24 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
             await api.send(event.group_openid,
                            message=f'服务器别名{name}不存在！')
     elif event.content.startswith(' pinglist') or event.content.startswith('pinglist'):
-        with open('./plugins/server_ip.json', 'r') as file:
+        with open('plugins/server_ip.json', 'r') as file:
             data = '\n' + '\n'.join(list(json.load(file).keys()))
         await api.send(event.group_openid,
                        message=f'当前服务器别名有：{data}')
     elif event.content.startswith(' pingrelist') or event.content.startswith('pingrelist'):
-        with open('./plugins/server_ip.json', 'r') as file:
+        with open('plugins/server_ip.json', 'r') as file:
             data = json.load(file)
         for i in data.copy():
             logging.info(i)
             if ping_ip(data[i])=="服务器地址有问题或服务器已经离线！":
                 del data[i]
-        with open('./plugins/server_ip.json', 'w') as file:
+        with open('plugins/server_ip.json', 'w') as file:
             json.dump(data, file)
         await api.send(event.group_openid,
                        message=f'异常服务器别名已清理')
     elif event.content.startswith(' ping') or event.content.startswith('ping'):
         if event.content.split(" ")[-1]=='ping':
-            with open('./plugins/server_ip.json', 'r') as file:
+            with open('plugins/server_ip.json', 'r') as file:
                 ip = json.load(file)['default']
             await api.send(event.group_openid,
                            message=f'{ping_ip(ip)}')
@@ -98,7 +98,7 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
                 await api.send(event.group_openid,
                            message=f'{ping_ip(event.content.split(" ")[-1])}')
             else:
-                with open('./plugins/server_ip.json', 'r') as file:
+                with open('plugins/server_ip.json', 'r') as file:
                     ip = json.load(file)[event.content.split(" ")[-1]]
                 await api.send(event.group_openid,
                                message=f'{ping_ip(ip)}')
