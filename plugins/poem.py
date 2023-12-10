@@ -11,12 +11,12 @@ from peanut_bot.utils import GroupAtMessageEvent, GuildAtMessageEvent
 from peanut_bot.driver import QOpenApi
 
 @plugin
-async def kfc(api:QOpenApi,event: GroupAtMessageEvent):
+async def poem(api:QOpenApi,event: GroupAtMessageEvent):
     if not isinstance(event,GroupAtMessageEvent):
         return
-    if event.content.startswith(' /kfc') or event.content.startswith('/kfc'):
-        url = "https://api.jixs.cc/api/wenan-fkxqs/index.php?type=json"
-        message=requests.get(url).json()[0]['kfc']
+    if event.content in ["/poem",'/诗',' /poem',' /诗']:
+        url = "http://www.wudada.online/Api/ScSj"
+        message = "\n"+"。\n".join(requests.get(url).json()["data"].split("。"))
         await api.send(event.group_openid,
                        message=f'{message}')
 

@@ -15,28 +15,28 @@ async def stock(api:QOpenApi,event: GroupAtMessageEvent):
     if not isinstance(event,GroupAtMessageEvent):
         return
     try:
-        with open('plugins/stock_gp.json', 'r') as file:
+        with open('data/stock_gp.json', 'r') as file:
             pass
     except:
-        with open('plugins/stock_gp.json', 'w') as file:
+        with open('data/stock_gp.json', 'w') as file:
             data = {'default':'sh000001'}
             json.dump(data, file)
-    if event.content.startswith(' stockhelp') or event.content.startswith('stockhelp'):
+    if event.content.startswith(' /stockhelp') or event.content.startswith('/stockhelp'):
         help_message = (
-                        '\n使用[stock]查询默认股票信息'
-                        '\n使用[stock <stock_gp>/<name>]查询指定股票信息'
-                        '\n使用[stockset <stock_gp>]设置默认股票'
-                        '\n使用[stockadd <name> <stock_gp>]添加股票别名'
-                        '\n使用[stockdel <name>]删除股票别名'
-                        '\n使用[stocklist]查看股票列表')
+                        '\n使用[/stock]查询默认股票信息'
+                        '\n使用[/stock <stock_gp>/<name>]查询指定股票信息'
+                        '\n使用[/stockset <stock_gp>]设置默认股票'
+                        '\n使用[/stockadd <name> <stock_gp>]添加股票别名'
+                        '\n使用[/stockdel <name>]删除股票别名'
+                        '\n使用[/stocklist]查看股票列表')
         await api.send(event.group_openid,
                        message=f'{help_message}')
-    elif event.content.startswith(' stockset') or event.content.startswith('stockset'):
-        with open('plugins/stock_gp.json', 'r') as file:
+    elif event.content.startswith(' /stockset') or event.content.startswith('/stockset'):
+        with open('data/stock_gp.json', 'r') as file:
             data = json.load(file)
         stock_gp=event.content.split(" ")[-1]
         if get_stock_message(stock_gp) != "股票代码错误！":
-            with open('plugins/stock_gp.json', 'w') as file:
+            with open('data/stock_gp.json', 'w') as file:
                 data['default'] = stock_gp
                 json.dump(data, file)
             await api.send(event.group_openid,
@@ -44,10 +44,10 @@ async def stock(api:QOpenApi,event: GroupAtMessageEvent):
         else:
             await api.send(event.group_openid,
                            message=f'股票代码错误！')
-    elif event.content.startswith(' stockadd') or event.content.startswith('stockadd'):
+    elif event.content.startswith(' /stockadd') or event.content.startswith('/stockadd'):
         name=event.content.split(" ")[-2]
         stock_gp=event.content.split(" ")[-1]
-        with open('plugins/stock_gp.json', 'r') as file:
+        with open('data/stock_gp.json', 'r') as file:
             data = json.load(file)
         if name in data:
             await api.send(event.group_openid,
@@ -58,7 +58,7 @@ async def stock(api:QOpenApi,event: GroupAtMessageEvent):
                                message=f'股票别名违规！')
             else:
                 if get_stock_message(stock_gp) != "股票代码错误！":
-                    with open('plugins/stock_gp.json', 'w') as file:
+                    with open('data/stock_gp.json', 'w') as file:
                         data[name] = stock_gp
                         json.dump(data, file)
                     await api.send(event.group_openid,
@@ -66,12 +66,12 @@ async def stock(api:QOpenApi,event: GroupAtMessageEvent):
                 else:
                     await api.send(event.group_openid,
                                    message=f'股票代码错误！')
-    elif event.content.startswith(' stockdel') or event.content.startswith('stockdel'):
+    elif event.content.startswith(' /stockdel') or event.content.startswith('/stockdel'):
         name = event.content.split(" ")[-1]
-        with open('plugins/stock_gp.json', 'r') as file:
+        with open('data/stock_gp.json', 'r') as file:
             data = json.load(file)
         if name in data and name != 'default':
-            with open('plugins/stock_gp.json', 'w+') as file:
+            with open('data/stock_gp.json', 'w+') as file:
                 del data[name]
                 json.dump(data, file)
             await api.send(event.group_openid,
@@ -79,8 +79,8 @@ async def stock(api:QOpenApi,event: GroupAtMessageEvent):
         else:
             await api.send(event.group_openid,
                            message=f'股票别名{name}不存在！')
-    elif event.content.startswith(' stocklist') or event.content.startswith('stocklist'):
-        with open('plugins/stock_gp.json', 'r') as file:
+    elif event.content.startswith(' /stocklist') or event.content.startswith('/stocklist'):
+        with open('data/stock_gp.json', 'r') as file:
             data = json.load(file)
         message,n=str("当前记录的股票有：\n"),0
         for i in data:
@@ -89,15 +89,15 @@ async def stock(api:QOpenApi,event: GroupAtMessageEvent):
             message=message+f"{n}.[{i}]:{stock_gp}\n"
         await api.send(event.group_openid,
                        message=f'{message}')
-    elif event.content.startswith(' stock') or event.content.startswith('stock'):
-        if event.content.split(" ")[-1]=='stock':
-            with open('plugins/stock_gp.json', 'r') as file:
+    elif event.content.startswith(' /stock') or event.content.startswith('/stock'):
+        if event.content.split(" ")[-1]=='/stock':
+            with open('data/stock_gp.json', 'r') as file:
                 stock_gp = json.load(file)['default']
             await api.send(event.group_openid,
                            message=f'{get_stock_message(stock_gp)}')
         else:
             name=event.content.split(" ")[-1]
-            with open('plugins/stock_gp.json', 'r') as file:
+            with open('data/stock_gp.json', 'r') as file:
                 data = json.load(file)
             if '.' in name:
                 await api.send(event.group_openid,
@@ -123,7 +123,7 @@ def get_stock_message(gp):
                   f"涨跌:{data[31]}({data[32]}%)" \
                   f"\n最高:{data[33]}\n" \
                   f"最低:{data[34]}" \
-                  f"\n总市值:{data[45]}"
+                  f"\n总市值:{data[45]}亿元"
         return message
     except:
         return "股票代码错误！"
