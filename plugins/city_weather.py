@@ -15,7 +15,7 @@ from peanut_bot.driver import QOpenApi
 async def city_weather(api:QOpenApi,event: AtMessageEvent):
     if not issubclass(type(event),AtMessageEvent):
         return
-    if event.content.startswith("/w") or event.content.startswith(" /w"):
+    if event.content.startswith("/w"):
         city=event.content.split(" ")[-1]
         try:
             message=get_weather(name_check(city))

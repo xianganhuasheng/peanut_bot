@@ -13,7 +13,7 @@ from peanut_bot.driver import QOpenApi
 async def meal(api:QOpenApi,event: AtMessageEvent):
     if not issubclass(type(event),AtMessageEvent):
         return
-    if event.content.startswith('/meal') or event.content.startswith(' /meal'):
+    if event.content.startswith('/meal'):
         url = "https://zj.v.api.aa1.cn/api/eats/"
         data = requests.get(url).json()
         logging.info(await api.send(event,
