@@ -4,3 +4,4 @@ __init__.py
 *.cfg
 plugins/eat_what.py.unused
 plugins/jrrp.py.unused
+*.swp
