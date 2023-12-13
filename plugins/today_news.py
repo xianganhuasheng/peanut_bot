@@ -17,7 +17,7 @@ async def today_news(api:QOpenApi,event: GroupAtMessageEvent):
     if event.content.startswith(' /news') or event.content.startswith('/news'):
         url = "https://dayu.qqsuu.cn/weiyujianbao/apis.php?type=json"
         data = requests.get(url).json()
-        logging.info(await api.get_img_info(event.group_id, data))
-        file_info = (await api.get_img_info(event.group_id, data))["file_info"]
-        logging.info(await api.send_img(event.group_openid, file_info))
+        logging.info(await api.get_img_info(event, data))
+        file_info = (await api.get_img_info(event, data))["file_info"]
+        logging.info(await api.send_img(event, file_info))
 

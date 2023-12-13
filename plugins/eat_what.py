@@ -25,7 +25,7 @@ async def eat_what(api:QOpenApi,event: GroupAtMessageEvent):
         logging.info("asking eating what")
         menu = ','.join(random.choices(food_list,k=3))
         logging.info(menu)
-        logging.info(await api.send(event.group_openid,
+        logging.info(await api.send(event,
                        message = f"今天的菜单是{menu}哦~"))
         
 @plugin

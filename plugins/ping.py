@@ -30,7 +30,7 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
                         '\n使用[/pingdel <name>]删除服务器别名'
                         '\n使用[/pinglist]查看服务器列表'
                         '\n使用[/pingrelist]清理异常服务器别名')
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'{help_message}')
     elif event.content.startswith(' /pingset') or event.content.startswith('/pingset'):
         with open('data/server_ip.json', 'r') as file:
@@ -38,7 +38,7 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
         with open('data/server_ip.json', 'w') as file:
             data['default'] = event.content.split(" ")[-1]
             json.dump(data, file)
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'默认服务器修改成功！')
     elif event.content.startswith(' /pingadd') or event.content.startswith('/pingadd'):
         name=event.content.split(" ")[-2]
@@ -46,17 +46,17 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
         with open('data/server_ip.json', 'r') as file:
             data = json.load(file)
         if name in data:
-            await api.send(event.group_openid,
+            await api.send(event,
                            message=f'服务器别名{name}已存在，请先删除再添加。')
         else:
             if "." in name:
-                await api.send(event.group_openid,
+                await api.send(event,
                                message=f'服务器别名违规！')
             else:
                 with open('data/server_ip.json', 'w') as file:
                     data[name] = ip
                     json.dump(data, file)
-                await api.send(event.group_openid,
+                await api.send(event,
                                message=f'已将服务器别名{name}添加')
     elif event.content.startswith(' /pingdel') or event.content.startswith('/pingdel'):
         name = event.content.split(" ")[-1]
@@ -66,15 +66,15 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
             with open('data/server_ip.json', 'w+') as file:
                 del data[name]
                 json.dump(data, file)
-            await api.send(event.group_openid,
+            await api.send(event,
                            message=f'已将服务器别名{name}删除。')
         else:
-            await api.send(event.group_openid,
+            await api.send(event,
                            message=f'服务器别名{name}不存在！')
     elif event.content.startswith(' /pinglist') or event.content.startswith('/pinglist'):
         with open('data/server_ip.json', 'r') as file:
             data = '\n' + '\n'.join(list(json.load(file).keys()))
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'当前服务器别名有：{data}')
     elif event.content.startswith(' /pingrelist') or event.content.startswith('/pingrelist'):
         with open('data/server_ip.json', 'r') as file:
@@ -85,22 +85,22 @@ async def ping(api:QOpenApi,event: GroupAtMessageEvent):
                 del data[i]
         with open('data/server_ip.json', 'w') as file:
             json.dump(data, file)
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'异常服务器别名已清理')
     elif event.content.startswith(' /ping') or event.content.startswith('/ping'):
         if event.content.split(" ")[-1]=='/ping':
             with open('data/server_ip.json', 'r') as file:
                 ip = json.load(file)['default']
-            await api.send(event.group_openid,
+            await api.send(event,
                            message=f'{ping_ip(ip)}')
         else:
             if '.' in event.content.split(" ")[-1]:
-                await api.send(event.group_openid,
+                await api.send(event,
                            message=f'{ping_ip(event.content.split(" ")[-1])}')
             else:
                 with open('data/server_ip.json', 'r') as file:
                     ip = json.load(file)[event.content.split(" ")[-1]]
-                await api.send(event.group_openid,
+                await api.send(event,
                                message=f'{ping_ip(ip)}')
 def ping_ip(ip):
     try:

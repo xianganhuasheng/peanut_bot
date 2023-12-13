@@ -15,5 +15,5 @@ async def koishi(api: QOpenApi,event: GroupAtMessageEvent):
     考虑学习数据库
     '''
     if event.content in ["koishi"," koishi"]:
-        file_info = (await api.get_img_info(event.group_id,"https://koishi.js.org/koishi.png"))["file_info"]
-        logging.info(await api.send_img(event.group_openid,file_info))
+        file_info = (await api.get_img_info(event,"https://koishi.js.org/koishi.png"))["file_info"]
+        logging.info(await api.send_img(event,file_info))

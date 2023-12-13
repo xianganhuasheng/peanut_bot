@@ -16,5 +16,5 @@ async def meal(api:QOpenApi,event: GroupAtMessageEvent):
     if event.content.startswith('/meal') or event.content.startswith(' /meal'):
         url = "https://zj.v.api.aa1.cn/api/eats/"
         data = requests.get(url).json()
-        logging.info(await api.send(event.group_openid,
+        logging.info(await api.send(event,
                        message = f"今天的菜单是{data['meal1']}，{data['meal2']}哦~"))

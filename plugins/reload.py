@@ -14,5 +14,5 @@ async def reload(api: QOpenApi,event: GroupAtMessageEvent):
     '''
     if event.content in ["reload",'更新插件',' reload',' 更新插件']:
         load_plugin()
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'更新完成')

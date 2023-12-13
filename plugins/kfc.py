@@ -17,6 +17,6 @@ async def kfc(api:QOpenApi,event: GroupAtMessageEvent):
     if event.content.startswith(' /kfc') or event.content.startswith('/kfc'):
         url = "https://api.jixs.cc/api/wenan-fkxqs/index.php?type=json"
         message=requests.get(url).json()[0]['kfc']
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'{message}')
 

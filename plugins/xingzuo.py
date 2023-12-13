@@ -17,7 +17,7 @@ async def xingzuo(api:QOpenApi,event: GroupAtMessageEvent):
     if event.content in ["/xz",'/星座',' /xz',' /星座']:
         url = "https://dayu.qqsuu.cn/xingzuoyunshi/apis.php?type=json"
         data = requests.get(url).json()['data']
-        logging.info(await api.get_img_info(event.group_id, data))
-        file_info = (await api.get_img_info(event.group_id, data))["file_info"]
-        logging.info(await api.send_img(event.group_openid, file_info))
+        logging.info(await api.get_img_info(event, data))
+        file_info = (await api.get_img_info(event, data))["file_info"]
+        logging.info(await api.send_img(event, file_info))
 

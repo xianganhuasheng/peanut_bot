@@ -19,10 +19,10 @@ async def city_weather(api:QOpenApi,event: GroupAtMessageEvent):
         city=event.content.split(" ")[-1]
         try:
             message=get_weather(name_check(city))
-            await api.send(event.group_openid,
+            await api.send(event,
                            message=f'{message}')
         except:
-            await api.send(event.group_openid,
+            await api.send(event,
                            message=f'城市名称错误!')
 def get_weather(city_code):
     url = f"https://www.haotechs.cn/ljh-wx/weather?adcode={city_code}"

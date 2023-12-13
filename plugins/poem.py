@@ -17,6 +17,6 @@ async def poem(api:QOpenApi,event: GroupAtMessageEvent):
     if event.content in ["/poem",'/诗',' /poem',' /诗']:
         url = "http://www.wudada.online/Api/ScSj"
         message = "\n"+"。\n".join(requests.get(url).json()["data"].split("。"))
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'{message}')
 

@@ -22,6 +22,6 @@ async def history_today(api:QOpenApi,event: GroupAtMessageEvent):
         for i in data["content"]:
             n = n + 1
             message = message + f"\n{n}.{i}"
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=f'{message}')
 

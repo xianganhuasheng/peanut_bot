@@ -14,14 +14,14 @@ from peanut_bot.driver import QOpenApi
 async def ping(api:QOpenApi,event: GroupAtMessageEvent):
     if not isinstance(event,GroupAtMessageEvent):
         return
-    if event.content in ['状态', 'status', ' 状态', ' status']:
+    if event.content in ['/状态', '/status', ' /状态', ' /status']:
         my_pid = get_pid("python.exe")[0].pid
         vm = psutil.virtual_memory().percent
         cpu = psutil.cpu_percent(percpu=False)
         du = psutil.disk_usage('/').percent
         mp = psutil.Process(my_pid).memory_percent()
         message = f"\n服务器状态:\n饱腹度：{vm}%\n脑力消耗：{cpu}%\n血量消耗：{du}%\n我吃了：{mp}%"
-        await api.send(event.group_openid,
+        await api.send(event,
                        message=message)
 def get_pid(name):
     pids = psutil.process_iter()
