@@ -4,6 +4,7 @@ import importlib
 import logging
 
 from ..bot.bot import Bot
+from ..utils import Event
 
 class Plugins:
     '''
@@ -11,11 +12,15 @@ class Plugins:
     '''
     plugin_list = []
 
-    def __init__(self):
-        pass
-    
-    @staticmethod
-    def reload(path):
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 author: str):
+        self.name: str  = name
+        self.description: str = description
+        self.author: str = author
+        self.actions = []
+    def on_event(event: Event):
         pass
 
 def plugin(func):

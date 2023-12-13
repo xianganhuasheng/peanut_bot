@@ -38,7 +38,6 @@ class Bot:
             'Authorization': self.final_token
         }
 
-        # 闲的没事自己手搓的log模块，用于打印到文件与字典(标准输出)中
         logging.info("start to hold openapi")
         # openapi driver
         self.openapi = QOpenApi(self.api_url,
@@ -70,10 +69,14 @@ class Bot:
                 event = GroupAtMessageEvent(rpl)
             elif rpl["t"] == "AT_MESSAGE_CREATE":
                 event = GuildAtMessageEvent(rpl)
+            else:
+                return
             await self.openapi.update_latest_message_id(event)
-
-            for plugin in Bot.plugin_list:
-                await plugin(self.openapi,event)
+            try:
+                for plugin in Bot.plugin_list:
+                    await plugin(self.openapi,event)
+            except Exception as e:
+                logging.error(e)
             # await self.OpenApi.api_send(rpl)
             # func(event=GroupAtMessageEvent(rpl),bot=self)
             # await self.action

@@ -5,7 +5,7 @@ import asyncio
 
 import logging
 
-from ..utils import Event
+from ..utils import Event,GroupAtMessageEvent,GuildAtMessageEvent
 
 class HTTPDriver:
     '''
@@ -116,11 +116,14 @@ class QOpenApi(HTTPDriver):
         logging.info(event.message_id)
         self.latest_message_id = event.message_id
 
-    async def send(self,group_openid,message=None) -> dict:
+    async def send(self,event,message=None) -> dict:
         # 发送消息的api，后续需要重新设计封装
         # 期望的形式是简便且好用，同时不需要太多东西
         # 例如，被动消息的话，需要的msg_id部分可以通过设计一个auto函数屏蔽掉
-        fix = f'/v2/groups/{group_openid}/messages'
+        if isinstance(event,GroupAtMessageEvent):
+            fix = f'/v2/groups/{event.group_openid}/messages'
+        elif isinstance(event,GuildAtMessageEvent):
+            fix = f'/channels/{event.group_openid}/messages'
         data = {"content":'我服了，奶奶' if message is None else message,
                 "msg_type":0,
                 'msg_id':str(self.latest_message_id)
