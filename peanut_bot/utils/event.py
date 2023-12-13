@@ -28,7 +28,7 @@ class GroupAtMessageEvent(AtMessageEvent):
     def __init__(self, payload: dict) -> None:
         super().__init__(payload)
         self.author = self.data["author"]
-        self.content:str = self.data["content"]
+        self.content:str = self.data["content"].strip()
         self.group_id:str  = self.data["group_id"]
         self.group_openid:str = self.data["group_openid"]
         self.message_id:str = self.data["id"]
@@ -41,7 +41,7 @@ class GuildAtMessageEvent(AtMessageEvent):
     def __init__(self, payload: dict) -> None:
         super().__init__(payload)
         self.author:str = self.data["author"]
-        self.content:str= self.data["content"]
+        self.content:str= self.data["content"].strip()
         self.guild_id:str = self.data["guild_id"]
         self.channel_id:str = self.data["channel_id"]
         self.message_id:str = self.data["id"]
