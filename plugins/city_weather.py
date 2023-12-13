@@ -8,12 +8,12 @@ import logging
 
 
 from peanut_bot.manager import plugin
-from peanut_bot.utils import GroupAtMessageEvent, GuildAtMessageEvent
+from peanut_bot.utils import AtMessageEvent, GuildAtMessageEvent
 from peanut_bot.driver import QOpenApi
 
 @plugin
-async def city_weather(api:QOpenApi,event: GroupAtMessageEvent):
-    if not isinstance(event,GroupAtMessageEvent):
+async def city_weather(api:QOpenApi,event: AtMessageEvent):
+    if not issubclass(type(event),AtMessageEvent):
         return
     if event.content.startswith("/w") or event.content.startswith(" /w"):
         city=event.content.split(" ")[-1]

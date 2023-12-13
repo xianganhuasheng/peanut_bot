@@ -163,7 +163,7 @@ class QOpenApi(HTTPDriver):
     async def send_img(self,event,file_url):
         if isinstance(event,GroupAtMessageEvent):
             fix = f'/v2/groups/{event.group_openid}/messages'
-            file_info = await self.get_img_info(event,file_url)
+            file_info = (await self.get_img_info(event,file_url))["file_info"]
             data = {"content":' ',
                 "msg_type":7,
                 'msg_id':str(self.latest_message_id),
@@ -172,14 +172,15 @@ class QOpenApi(HTTPDriver):
                 }
                 }
         elif isinstance(event,GuildAtMessageEvent):
-            fix = "/channels/{event.group_openid}/messages"
-            data = {"img":file_url,
+            fix = f"/channels/{event.channel_id}/messages"
+            data = {"image":file_url,
                     "msg_id":str(self.latest_message_id)
                     }
         # 调试用的log
-        logging.debug(f'try to send{json.dumps(data)} to {self.url}{fix}\n with header: {self.headers}')
-        await self.post_async(f'{self.url}{fix}')
+        logging.error(f'try to send{json.dumps(data)} to {self.url}{fix}\n with header: {self.headers}')
         rpl = await self.post_async(data,fix)
+        if str(rpl.get("code")) == 11263:
+            rpl = await self.post_async(data,fix)
         logging.debug(rpl)
         return rpl
 

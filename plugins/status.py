@@ -7,12 +7,12 @@ import psutil
 import logging
 
 from peanut_bot.manager import plugin
-from peanut_bot.utils import GroupAtMessageEvent, GuildAtMessageEvent
+from peanut_bot.utils import AtMessageEvent, GuildAtMessageEvent
 from peanut_bot.driver import QOpenApi
 
 @plugin
-async def ping(api:QOpenApi,event: GroupAtMessageEvent):
-    if not isinstance(event,GroupAtMessageEvent):
+async def ping(api:QOpenApi,event: AtMessageEvent):
+    if not isinstance(type(event),AtMessageEvent):
         return
     if event.content in ['/状态', '/status', ' /状态', ' /status']:
         my_pid = get_pid("python.exe")[0].pid
