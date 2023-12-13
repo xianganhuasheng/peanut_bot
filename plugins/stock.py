@@ -19,9 +19,9 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
             pass
     except:
         with open('data/stock_gp.json', 'w') as file:
-            data = {'default':'sh000001'}
+            data = {'default':'sh000001','agu':'sh000001'}
             json.dump(data, file)
-    if event.content.startswith(' /stockhelp') or event.content.startswith('/stockhelp'):
+    if event.content.startswith('/stockhelp'):
         help_message = (
                         '\n使用[/stock]查询默认股票信息'
                         '\n使用[/stock <stock_gp>/<name>]查询指定股票信息'
@@ -31,55 +31,67 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
                         '\n使用[/stocklist]查看股票列表')
         await api.send(event,
                        message=f'{help_message}')
-    elif event.content.startswith(' /stockset') or event.content.startswith('/stockset'):
-        with open('data/stock_gp.json', 'r') as file:
-            data = json.load(file)
-        stock_gp=event.content.split(" ")[-1]
-        if get_stock_message(stock_gp) != "股票代码错误！":
-            with open('data/stock_gp.json', 'w') as file:
-                data['default'] = stock_gp
-                json.dump(data, file)
+    elif event.content.startswith('/stockset'):
+        if event.content.split(" ")[-1] == '/stockset':
             await api.send(event,
-                           message=f'默认股票修改成功！')
+                           message=f'命令错误！')
         else:
-            await api.send(event,
-                           message=f'股票代码错误！')
-    elif event.content.startswith(' /stockadd') or event.content.startswith('/stockadd'):
-        name=event.content.split(" ")[-2]
-        stock_gp=event.content.split(" ")[-1]
-        with open('data/stock_gp.json', 'r') as file:
-            data = json.load(file)
-        if name in data:
-            await api.send(event,
-                           message=f'股票别名{name}已存在，请先删除再添加。')
-        else:
-            if '.' in name:
+            with open('data/stock_gp.json', 'r') as file:
+                data = json.load(file)
+            stock_gp=event.content.split(" ")[-1]
+            if get_stock_message(stock_gp) != "股票代码错误！":
+                with open('data/stock_gp.json', 'w') as file:
+                    data['default'] = stock_gp
+                    json.dump(data, file)
                 await api.send(event,
-                               message=f'股票别名违规！')
+                               message=f'默认股票修改成功！')
             else:
-                if get_stock_message(stock_gp) != "股票代码错误！":
-                    with open('data/stock_gp.json', 'w') as file:
-                        data[name] = stock_gp
-                        json.dump(data, file)
-                    await api.send(event,
-                                   message=f'已将股票别名{name}添加')
-                else:
-                    await api.send(event,
-                                   message=f'股票代码错误！')
-    elif event.content.startswith(' /stockdel') or event.content.startswith('/stockdel'):
-        name = event.content.split(" ")[-1]
-        with open('data/stock_gp.json', 'r') as file:
-            data = json.load(file)
-        if name in data and name != 'default':
-            with open('data/stock_gp.json', 'w+') as file:
-                del data[name]
-                json.dump(data, file)
+                await api.send(event,
+                               message=f'股票代码错误！')
+    elif event.content.startswith('/stockadd'):
+        name = event.content.split(" ")[-2]
+        stock_gp = event.content.split(" ")[-1]
+        if name == '/stockadd' or stock_gp == '/stockadd':
             await api.send(event,
-                           message=f'已将股票别名{name}删除。')
+                           message=f'命令错误！')
         else:
+            with open('data/stock_gp.json', 'r') as file:
+                data = json.load(file)
+            if name in data:
+                await api.send(event,
+                               message=f'股票别名{name}已存在，请先删除再添加。')
+            else:
+                if '.' in name:
+                    await api.send(event,
+                                   message=f'股票别名违规！')
+                else:
+                    if get_stock_message(stock_gp) != "股票代码错误！":
+                        with open('data/stock_gp.json', 'w') as file:
+                            data[name] = stock_gp
+                            json.dump(data, file)
+                        await api.send(event,
+                                       message=f'已将股票别名{name}添加')
+                    else:
+                        await api.send(event,
+                                       message=f'股票代码错误！')
+    elif event.content.startswith('/stockdel'):
+        name = event.content.split(" ")[-1]
+        if name == '/stockdel':
             await api.send(event,
-                           message=f'股票别名{name}不存在！')
-    elif event.content.startswith(' /stocklist') or event.content.startswith('/stocklist'):
+                           message=f'命令错误！')
+        else:
+            with open('data/stock_gp.json', 'r') as file:
+                data = json.load(file)
+            if name in data and name != 'default':
+                with open('data/stock_gp.json', 'w+') as file:
+                    del data[name]
+                    json.dump(data, file)
+                await api.send(event,
+                               message=f'已将股票别名{name}删除。')
+            else:
+                await api.send(event,
+                               message=f'股票别名{name}不存在！')
+    elif event.content.startswith('/stocklist'):
         with open('data/stock_gp.json', 'r') as file:
             data = json.load(file)
         message,n=str("当前记录的股票有：\n"),0
@@ -89,7 +101,7 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
             message=message+f"{n}.[{i}]:{stock_gp}\n"
         await api.send(event,
                        message=f'{message}')
-    elif event.content.startswith(' /stock') or event.content.startswith('/stock'):
+    elif event.content.startswith('/stock'):
         if event.content.split(" ")[-1]=='/stock':
             with open('data/stock_gp.json', 'r') as file:
                 stock_gp = json.load(file)['default']
@@ -131,11 +143,11 @@ def get_stock_message(gp):
 def data_format(data):
     l=len(data)
     if l >= 12:
-        result= f"{data[:-11]}.{data[-11:-9]}万亿"
+        result= f"{data[:-12]}.{data[-12:-10]}万亿"
     elif l >= 8:
-        result= f"{data[:-7]}.{data[-7:-5]}亿"
+        result= f"{data[:-8]}.{data[-8:-6]}亿"
     elif l >= 4:
-        result = f"{data[:-3]}.{data[-3:-1]}万"
+        result = f"{data[:-4]}.{data[-4:-2]}万"
     else:
         result = data
     return result

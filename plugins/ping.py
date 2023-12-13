@@ -19,9 +19,9 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
             pass
     except:
         with open('data/server_ip.json', 'w') as file:
-            data = {'default': 'svi.arrowss.top'}
+            data = {'default': '2b2t.org','2b2t':'2b2t.org'}
             json.dump(data, file)
-    if event.content.startswith(' /pinghelp') or event.content.startswith('/pinghelp'):
+    if event.content.startswith('/pinghelp'):
         help_message = (
                         '\n使用[/ping]查询默认服务器状态'
                         '\n使用[/ping <server>]查询指定服务器状态'
@@ -32,51 +32,63 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
                         '\n使用[/pingrelist]清理异常服务器别名')
         await api.send(event,
                        message=f'{help_message}')
-    elif event.content.startswith(' /pingset') or event.content.startswith('/pingset'):
-        with open('data/server_ip.json', 'r') as file:
-            data = json.load(file)
-        with open('data/server_ip.json', 'w') as file:
-            data['default'] = event.content.split(" ")[-1]
-            json.dump(data, file)
-        await api.send(event,
-                       message=f'默认服务器修改成功！')
-    elif event.content.startswith(' /pingadd') or event.content.startswith('/pingadd'):
-        name=event.content.split(" ")[-2]
-        ip=event.content.split(" ")[-1]
-        with open('data/server_ip.json', 'r') as file:
-            data = json.load(file)
-        if name in data:
+    elif event.content.startswith('/pingset'):
+        if event.content.split(" ")[-1] == '/pingset':
             await api.send(event,
-                           message=f'服务器别名{name}已存在，请先删除再添加。')
+                           message=f'命令错误！')
         else:
-            if "." in name:
-                await api.send(event,
-                               message=f'服务器别名违规！')
-            else:
-                with open('data/server_ip.json', 'w') as file:
-                    data[name] = ip
-                    json.dump(data, file)
-                await api.send(event,
-                               message=f'已将服务器别名{name}添加')
-    elif event.content.startswith(' /pingdel') or event.content.startswith('/pingdel'):
-        name = event.content.split(" ")[-1]
-        with open('data/server_ip.json', 'r') as file:
-            data = json.load(file)
-        if name in data and name != 'default':
-            with open('data/server_ip.json', 'w+') as file:
-                del data[name]
+            with open('data/server_ip.json', 'r') as file:
+                data = json.load(file)
+            with open('data/server_ip.json', 'w') as file:
+                data['default'] = event.content.split(" ")[-1]
                 json.dump(data, file)
             await api.send(event,
-                           message=f'已将服务器别名{name}删除。')
-        else:
+                           message=f'默认服务器修改成功！')
+    elif event.content.startswith('/pingadd'):
+        name = event.content.split(" ")[-2]
+        ip = event.content.split(" ")[-1]
+        if name == '/pingadd' or ip == '/pingadd':
             await api.send(event,
-                           message=f'服务器别名{name}不存在！')
-    elif event.content.startswith(' /pinglist') or event.content.startswith('/pinglist'):
+                           message=f'命令错误！')
+        else:
+            with open('data/server_ip.json', 'r') as file:
+                data = json.load(file)
+            if name in data:
+                await api.send(event,
+                               message=f'服务器别名{name}已存在，请先删除再添加。')
+            else:
+                if "." in name:
+                    await api.send(event,
+                                   message=f'服务器别名违规！')
+                else:
+                    with open('data/server_ip.json', 'w') as file:
+                        data[name] = ip
+                        json.dump(data, file)
+                    await api.send(event,
+                                   message=f'已将服务器别名{name}添加')
+    elif event.content.startswith('/pingdel'):
+        name = event.content.split(" ")[-1]
+        if name == "/pingdel":
+            await api.send(event,
+                           message=f'命令错误！')
+        else:
+            with open('data/server_ip.json', 'r') as file:
+                data = json.load(file)
+            if name in data and name != 'default':
+                with open('data/server_ip.json', 'w+') as file:
+                    del data[name]
+                    json.dump(data, file)
+                await api.send(event,
+                               message=f'已将服务器别名{name}删除。')
+            else:
+                await api.send(event,
+                               message=f'服务器别名{name}不存在！')
+    elif event.content.startswith('/pinglist'):
         with open('data/server_ip.json', 'r') as file:
             data = '\n' + '\n'.join(list(json.load(file).keys()))
         await api.send(event,
                        message=f'当前服务器别名有：{data}')
-    elif event.content.startswith(' /pingrelist') or event.content.startswith('/pingrelist'):
+    elif event.content.startswith('/pingrelist'):
         with open('data/server_ip.json', 'r') as file:
             data = json.load(file)
         for i in data.copy():
@@ -87,7 +99,7 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
             json.dump(data, file)
         await api.send(event,
                        message=f'异常服务器别名已清理')
-    elif event.content.startswith(' /ping') or event.content.startswith('/ping'):
+    elif event.content.startswith('/ping'):
         if event.content.split(" ")[-1]=='/ping':
             with open('data/server_ip.json', 'r') as file:
                 ip = json.load(file)['default']
