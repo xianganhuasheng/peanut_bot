@@ -16,6 +16,6 @@ async def today_news(api:QOpenApi,event: AtMessageEvent):
         return
     if event.content.startswith(' /news') or event.content.startswith('/news'):
         url = "https://dayu.qqsuu.cn/weiyujianbao/apis.php?type=json"
-        data = requests.get(url).json()
+        data = requests.get(url).json()["data"]
         logging.info(await api.send_img(event, data))
 
