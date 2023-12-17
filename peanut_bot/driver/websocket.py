@@ -23,17 +23,17 @@ class WebsocketDriver:
     
     async def connect(self) -> None:
         self.session = await websockets.connect(self.url)
-        logging.info("successfully connect to the websocket server")
+        logging.info(f"successfully connect to {self.url}")
 
     async def send(self,payload: str or dict) -> None:
         if isinstance(payload,dict):
             payload = json.dumps(payload)
         await self.session.send(payload)
-        logging.info(f"successfully send {payload}")
+        logging.debug(f"successfully send {payload}")
     
     async def receive(self) -> dict:
         msg = json.loads(await self.session.recv())
-        logging.info(f"websocket receive message: {msg}")
+        logging.debug(f"websocket receive message: {msg}")
         return msg
 
 
@@ -48,7 +48,7 @@ class QWebsocket(WebsocketDriver):
         await super().connect()
         rpl = await super().receive()
         self.heartbeat_cd = int(rpl["d"]["heartbeat_interval"]) / 1000
-        logging.info(f"the heartbeat cd is {self.heartbeat_cd}s")
+        logging.debug(f"the heartbeat cd is {self.heartbeat_cd}s")
 
 
     async def identify(self):

@@ -98,3 +98,4 @@ class Bot:
             asyncio.set_event_loop(asyncio.new_event_loop())
         asyncio.ensure_future(self.websocket.run(self._on_recieve))
         asyncio.ensure_future(self.openapi.hold_openapi())
+        logging.info(f'Starting to run the bot with id: {self.app_id}, qid: {self.qid}')
