@@ -2,26 +2,11 @@ import os
 import sys
 import importlib
 import logging
+import copy
 
 from ..bot.bot import Bot
-from ..utils import Event
+from ..utils import Event, GroupAtMessageEvent, GuildAtMessageEvent
 
-class Plugins:
-    '''
-    插件管理类，有一个全局插件列表，bot会默认调用
-    '''
-    plugin_list = []
-
-    def __init__(self,
-                 name: str,
-                 description: str,
-                 author: str):
-        self.name: str  = name
-        self.description: str = description
-        self.author: str = author
-        self.actions = []
-    def on_event(event: Event):
-        pass
 
 def plugin(func):
     Bot.plugin_list.append(func)

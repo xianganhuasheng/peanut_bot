@@ -62,14 +62,17 @@ class Bot:
             logging.debug('successfully heartbeat')
         elif rpl["op"] == 0:
             #这部分还没有设计好
-            logging.info(rpl)
+            # logging.info(rpl)
             self.latest_msg_index = rpl["s"]
             event = Event(rpl)
             if rpl["t"] == "GROUP_AT_MESSAGE_CREATE":
                 event = GroupAtMessageEvent(rpl)
+                logging.info(f"event: {event.event_name}; source:{event.group_openid}; content:{event.content}")
             elif rpl["t"] == "AT_MESSAGE_CREATE":
                 event = GuildAtMessageEvent(rpl)
+                logging.info(f"event: {event.event_name}; source:{event.group_openid}; content:{event.content} At {event.time}")
             else:
+                logging.info(f"event: {event.event_name}; data:{event.data}")
                 return
             await self.openapi.update_latest_message_id(event)
             try:
@@ -98,4 +101,3 @@ class Bot:
             asyncio.set_event_loop(asyncio.new_event_loop())
         asyncio.ensure_future(self.websocket.run(self._on_recieve))
         asyncio.ensure_future(self.openapi.hold_openapi())
-        logging.info(f'Starting to run the bot with id: {self.app_id}, qid: {self.qid}')
