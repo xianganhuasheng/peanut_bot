@@ -7,7 +7,7 @@ from mcstatus import JavaServer
 import logging
 
 from peanut_bot.manager import plugin
-from peanut_bot.utils import AtMessageEvent, GuildAtMessageEvent
+from peanut_bot.utils import AtMessageEvent
 from peanut_bot.driver import QOpenApi
 
 @plugin

@@ -7,3 +7,4 @@ plugins/jrrp.py.unused
 *.swp
 *.txt
 test/*
+peanut_bot/pic_server/ngrok.exe

@@ -113,7 +113,7 @@ class QOpenApi(HTTPDriver):
         '''
         主要是更新最后的id，后续考虑通过设计离开api部分，或者作为发消息所需要的id
         '''
-        logging.info(event.message_id)
+        # logging.info(event.message_id)
         self.latest_message_id = event.message_id
 
     async def send(self,event,message=None) -> dict:
@@ -177,7 +177,7 @@ class QOpenApi(HTTPDriver):
                     "msg_id":str(self.latest_message_id)
                     }
         # 调试用的log
-        logging.error(f'try to send{json.dumps(data)} to {self.url}{fix}\n with header: {self.headers}')
+        logging.debug(f'try to send{json.dumps(data)} to {self.url}{fix}\n with header: {self.headers}')
         rpl = await self.post_async(data,fix)
         if str(rpl.get("code")) == 11263:
             rpl = await self.post_async(data,fix)

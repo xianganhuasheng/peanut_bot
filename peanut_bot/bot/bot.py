@@ -20,7 +20,7 @@ class Bot:
     Bot在处理好收到的消息后使用OpenApi提供的方法发送消息。
     '''
     plugin_list = []
-    def __init__(self,Qid:str,AppID:str,Token:str,AppSecret:str,is_sandbox = False) -> None:
+    def __init__(self,Qid:str,AppID:str,Token:str,AppSecret:str,is_sandbox = False,**_) -> None:
         # botInfo part
         self.qid = Qid
         self.app_id = AppID
