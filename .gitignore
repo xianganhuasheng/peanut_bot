@@ -8,3 +8,5 @@ plugins/jrrp.py.unused
 *.txt
 test/*
 peanut_bot/pic_server/ngrok.exe
+data/*
+pics/*

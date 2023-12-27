@@ -76,8 +76,9 @@ class Bot:
                 return
             await self.openapi.update_latest_message_id(event)
             try:
+                
                 for plugin in Bot.plugin_list:
-                    await plugin(self.openapi,event)
+                    asyncio.create_task(plugin(self.openapi,event))
             except Exception as e:
                 logging.error(e)
             # await self.OpenApi.api_send(rpl)

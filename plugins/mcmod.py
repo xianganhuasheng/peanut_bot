@@ -3,7 +3,6 @@
 
 import os
 import sys
-import time
 import logging
 
 import asyncio
@@ -31,10 +30,10 @@ async def mcmod(api: QOpenApi,event: AtMessageEvent):
         edge_options.add_argument('--disable-gpu')
         edge_options.add_argument('--hide-scrollbars')
         driver = wd.Edge(options = edge_options)#浏览器设置
-        asyncio.sleep(0.1)
+        await asyncio.sleep(0.1)
         print('------\nsearching results\n------')
         driver.get(r"https://search.mcmod.cn/s?key="+ asking)
-        asyncio.sleep(0.1)
+        await asyncio.sleep(0.1)
         print('------------taking screenshot------------')
         a = driver.find_elements('class name','result-item')
         
@@ -52,9 +51,9 @@ async def mcmod(api: QOpenApi,event: AtMessageEvent):
             url = c.text
             if not url.startswith('https://'):
                 url = "https://" + url
-            asyncio.sleep(0.1)
+            await asyncio.sleep(0.1)
             driver.get(url)
-            asyncio.sleep(0.1)
+            await asyncio.sleep(0.1)
             k = 1
             js_height = "return document.body.clientHeight"
             height = driver.execute_script(js_height)
@@ -62,7 +61,7 @@ async def mcmod(api: QOpenApi,event: AtMessageEvent):
                 js_move = "window.scrollTo(0,{})".format(k * 500)
                 print(js_move)
                 driver.execute_script(js_move)
-                asyncio.sleep(0.5)
+                await asyncio.sleep(0.5)
                 height = driver.execute_script(js_height)
                 comment_box_y = driver.find_elements('class name','comment-title')
                 print(comment_box_y)
@@ -75,7 +74,7 @@ async def mcmod(api: QOpenApi,event: AtMessageEvent):
             driver.set_window_size(w,h)
             url = driver.current_url
             driver.implicitly_wait(5)
-            asyncio.sleep(0.1)
+            await asyncio.sleep(0.1)
             print('------\nsaving screenshot\n------')
             print(os.path.join(PIC,f'{event.author["id"]}_mcmod.jpg'))
             try:

@@ -15,10 +15,10 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
     if not issubclass(type(event),AtMessageEvent):
         return
     try:
-        with open('data/stock_gp.json', 'r') as file:
+        with open(f'data/{event.group_id}_stock_gp.json', 'r') as file:
             pass
     except:
-        with open('data/stock_gp.json', 'w') as file:
+        with open(f'data/{event.group_id}_stock_gp.json', 'w') as file:
             data = {'default':'sh000001','agu':'sh000001'}
             json.dump(data, file)
     if event.content.startswith('/stockhelp'):
@@ -36,11 +36,11 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
             await api.send(event,
                            message=f'命令错误！')
         else:
-            with open('data/stock_gp.json', 'r') as file:
+            with open(f'data/{event.group_id}_stock_gp.json', 'r') as file:
                 data = json.load(file)
             stock_gp=event.content.split(" ")[-1]
             if get_stock_message(stock_gp) != "股票代码错误！":
-                with open('data/stock_gp.json', 'w') as file:
+                with open(f'data/{event.group_id}_stock_gp.json', 'w') as file:
                     data['default'] = stock_gp
                     json.dump(data, file)
                 await api.send(event,
@@ -55,7 +55,7 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
             await api.send(event,
                            message=f'命令错误！')
         else:
-            with open('data/stock_gp.json', 'r') as file:
+            with open(f'data/{event.group_id}_stock_gp.json', 'r') as file:
                 data = json.load(file)
             if name in data:
                 await api.send(event,
@@ -66,7 +66,7 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
                                    message=f'股票别名违规！')
                 else:
                     if get_stock_message(stock_gp) != "股票代码错误！":
-                        with open('data/stock_gp.json', 'w') as file:
+                        with open(f'data/{event.group_id}_stock_gp.json', 'w') as file:
                             data[name] = stock_gp
                             json.dump(data, file)
                         await api.send(event,
@@ -80,10 +80,10 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
             await api.send(event,
                            message=f'命令错误！')
         else:
-            with open('data/stock_gp.json', 'r') as file:
+            with open(f'data/{event.group_id}_stock_gp.json', 'r') as file:
                 data = json.load(file)
             if name in data and name != 'default':
-                with open('data/stock_gp.json', 'w+') as file:
+                with open(f'data/{event.group_id}_stock_gp.json', 'w+') as file:
                     del data[name]
                     json.dump(data, file)
                 await api.send(event,
@@ -92,7 +92,7 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
                 await api.send(event,
                                message=f'股票别名{name}不存在！')
     elif event.content.startswith('/stocklist'):
-        with open('data/stock_gp.json', 'r') as file:
+        with open(f'data/{event.group_id}_stock_gp.json', 'r') as file:
             data = json.load(file)
         message,n=str("当前记录的股票有：\n"),0
         for i in data:
@@ -103,13 +103,13 @@ async def stock(api:QOpenApi,event: AtMessageEvent):
                        message=f'{message}')
     elif event.content.startswith('/stock'):
         if event.content.split(" ")[-1]=='/stock':
-            with open('data/stock_gp.json', 'r') as file:
+            with open(f'data/{event.group_id}_stock_gp.json', 'r') as file:
                 stock_gp = json.load(file)['default']
             await api.send(event,
                            message=f'{get_stock_message(stock_gp)}')
         else:
             name=event.content.split(" ")[-1]
-            with open('data/stock_gp.json', 'r') as file:
+            with open(f'data/{event.group_id}_stock_gp.json', 'r') as file:
                 data = json.load(file)
             if '.' in name:
                 await api.send(event,

@@ -1,6 +1,7 @@
 # coding = utf-8
 import sys
 import json
+import os
 
 sys.path.append('..')
 from mcstatus import JavaServer
@@ -14,13 +15,11 @@ from peanut_bot.driver import QOpenApi
 async def ping(api:QOpenApi,event: AtMessageEvent):
     if not issubclass(type(event),AtMessageEvent):
         return
-    try:
-        with open('data/server_ip.json', 'r') as file:
-            pass
-    except:
-        with open('data/server_ip.json', 'w') as file:
+    if not os.path.exists(f'data/{event.group_id}___server_ip.json'):
+        with open(f'data/{event.group_id}___server_ip.json', 'w',encoding="utf-8") as file:
             data = {'default': '2b2t.org','2b2t':'2b2t.org'}
-            json.dump(data, file)
+            json.dump(data, file,indent=4,ensure_ascii=True)
+        
     if event.content.startswith('/pinghelp'):
         help_message = (
                         '\n使用[/ping]查询默认服务器状态'
@@ -37,9 +36,9 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
             await api.send(event,
                            message=f'命令错误！')
         else:
-            with open('data/server_ip.json', 'r') as file:
+            with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                 data = json.load(file)
-            with open('data/server_ip.json', 'w') as file:
+            with open(f'data/{event.group_id}___server_ip.json', 'w') as file:
                 data['default'] = event.content.split(" ")[-1]
                 json.dump(data, file)
             await api.send(event,
@@ -51,7 +50,7 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
             await api.send(event,
                            message=f'命令错误！')
         else:
-            with open('data/server_ip.json', 'r') as file:
+            with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                 data = json.load(file)
             if name in data:
                 await api.send(event,
@@ -61,7 +60,7 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
                     await api.send(event,
                                    message=f'服务器别名违规！')
                 else:
-                    with open('data/server_ip.json', 'w') as file:
+                    with open(f'data/{event.group_id}___server_ip.json', 'w') as file:
                         data[name] = ip
                         json.dump(data, file)
                     await api.send(event,
@@ -72,10 +71,10 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
             await api.send(event,
                            message=f'命令错误！')
         else:
-            with open('data/server_ip.json', 'r') as file:
+            with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                 data = json.load(file)
             if name in data and name != 'default':
-                with open('data/server_ip.json', 'w+') as file:
+                with open(f'data/{event.group_id}___server_ip.json', 'w+') as file:
                     del data[name]
                     json.dump(data, file)
                 await api.send(event,
@@ -84,24 +83,24 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
                 await api.send(event,
                                message=f'服务器别名{name}不存在！')
     elif event.content.startswith('/pinglist'):
-        with open('data/server_ip.json', 'r') as file:
+        with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
             data = '\n' + '\n'.join(list(json.load(file).keys()))
         await api.send(event,
                        message=f'当前服务器别名有：{data}')
     elif event.content.startswith('/pingrelist'):
-        with open('data/server_ip.json', 'r') as file:
+        with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
             data = json.load(file)
         for i in data.copy():
             logging.info(i)
-            if ping_ip(data[i])=="服务器地址有问题或服务器已经离线！":
+            if (await ping_ip(data[i]))=="服务器地址有问题或服务器已经离线！":
                 del data[i]
-        with open('data/server_ip.json', 'w') as file:
+        with open(f'data/{event.group_id}___server_ip.json', 'w') as file:
             json.dump(data, file)
         await api.send(event,
                        message=f'异常服务器别名已清理')
     elif event.content.startswith('/ping'):
         if event.content.split(" ")[-1]=='/ping':
-            with open('data/server_ip.json', 'r') as file:
+            with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                 ip = json.load(file)['default']
             await api.send(event,
                            message=f'{ping_ip(ip)}')
@@ -110,13 +109,13 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
                 await api.send(event,
                            message=f'{ping_ip(event.content.split(" ")[-1])}')
             else:
-                with open('data/server_ip.json', 'r') as file:
+                with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                     ip = json.load(file)[event.content.split(" ")[-1]]
                 await api.send(event,
-                               message=f'{ping_ip(ip)}')
-def ping_ip(ip):
+                               message=f'{await ping_ip(ip)}')
+async def ping_ip(ip):
     try:
-        server = JavaServer.lookup(ip)
+        server = await JavaServer.async_lookup(ip)
         status = vars(server.status())['raw']
     except:
         return "服务器地址有问题或服务器已经离线！"
