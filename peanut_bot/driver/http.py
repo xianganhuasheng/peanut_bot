@@ -126,7 +126,7 @@ class QOpenApi(HTTPDriver):
             fix = f'/channels/{event.group_openid}/messages'
         data = {"content":'我服了，奶奶' if message is None else message,
                 "msg_type":0,
-                'msg_id':str(self.latest_message_id)
+                'msg_id':str(event.message_id)
                 }
         # 调试用的log
         logging.debug(f'try to send{json.dumps(data)} to {self.url}{fix}\n with header: {self.headers}')
@@ -166,7 +166,7 @@ class QOpenApi(HTTPDriver):
             file_info = (await self.get_img_info(event,file_url))["file_info"]
             data = {"content":' ',
                 "msg_type":7,
-                'msg_id':str(self.latest_message_id),
+                'msg_id':str(event.message_id),
                 "media": {
                     "file_info": file_info
                 }
