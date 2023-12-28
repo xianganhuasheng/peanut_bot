@@ -92,7 +92,8 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
             data = json.load(file)
         for i in data.copy():
             logging.info(i)
-            if (await ping_ip(data[i]))=="服务器地址有问题或服务器已经离线！":
+            ret = await ping_ip(data[i])
+            if ret =="服务器地址有问题或服务器已经离线！":
                 del data[i]
         with open(f'data/{event.group_id}___server_ip.json', 'w') as file:
             json.dump(data, file)
@@ -102,17 +103,15 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
         if event.content.split(" ")[-1]=='/ping':
             with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                 ip = json.load(file)['default']
-            await api.send(event,
-                           message=f'{ping_ip(ip)}')
         else:
             if '.' in event.content.split(" ")[-1]:
-                await api.send(event,
-                           message=f'{ping_ip(event.content.split(" ")[-1])}')
+                ip = event.content.split(" ")[-1]
             else:
                 with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                     ip = json.load(file)[event.content.split(" ")[-1]]
-                await api.send(event,
-                               message=f'{await ping_ip(ip)}')
+        ret = await ping_ip(ip)
+        await api.send(event,message=f'{ret}')
+                
 async def ping_ip(ip):
     try:
         server = await JavaServer.async_lookup(ip)
@@ -125,7 +124,7 @@ async def ping_ip(ip):
             flag = False
         else:
             flag = True
-    print(f'flag is {flag}')
+    # print(f'flag is {flag}')
     m_players = status['players']['max']
     n_players = status['players']['online']
     game_version = status['version']['name']
