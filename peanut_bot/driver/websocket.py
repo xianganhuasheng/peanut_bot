@@ -3,7 +3,7 @@ import asyncio
 import json
 import logging
 import websockets
-from websockets import ConnectionClosed
+from websockets.exceptions import ConnectionClosed
 
 
 class WebsocketDriver:
@@ -71,6 +71,8 @@ class QWebsocket(WebsocketDriver):
         await self.send(json.dumps(payload))
         rpl = await super().receive()
         logging.debug(f'Identifying gets reply: {rpl}')
+        if rpl["d"] == False:
+            return
         self.latest_msg_id = rpl["s"]
         self.Version = rpl["d"]["version"]
         self.SessionId = rpl["d"]["session_id"]
@@ -96,21 +98,10 @@ class QWebsocket(WebsocketDriver):
         将bot中的一个消息处理函数绑定进来
         '''
         while True:
-            try:
-                message = await super().receive()
-                if message.get("s") is not None:
-                    self.latest_msg_id = message["s"]
-                await func(message)
-            except ConnectionClosed as e:
-                logging.exception(e)
-                if e.code == 1006:
-                    logging.info('restarting websocket connection')
-                    await asyncio.sleep(10)
-                    raise e
-                    # await self.reconnect()
-                else:
-                    logging.info("WebSocket connection closed.")
-                    break
+            message = await super().receive()
+            if message.get("s") is not None:
+                self.latest_msg_id = message["s"]
+            await func(message)
 
 
     async def run(self,func) -> None:
@@ -130,11 +121,24 @@ class QWebsocket(WebsocketDriver):
                         asyncio.ensure_future(self.bot_heartbeat())
                         await self.receive(func)
                     except ConnectionClosed as e:
-                        # 下面都是抄的
-                        logging.exception(e)
-                        if e.code == 1006:
-                            logging.info('restart websocket')
-                            await asyncio.sleep(10)
+                        cd = 10
+                        logging.exception(e,exc_info=False)
+                        if e.code in range(4900,4914):
+                            logging.info(f"服务器内部错误，{cd}秒后尝试重连")
+                            await asyncio.sleep(cd)
+                            logging.info("尝试重新连接到服务器")
+                            continue
+                        elif e.code in (4008,4009):
+                            logging.info(f"{cd}")
+                            await asyncio.sleep(cd)
+                            logging.info("尝试重新连接到服务器")
+                            continue
+                        elif e.code in (4006,4007):
+                            logging.info(f"服务器内部错误，{cd}秒后尝试重连")
+                            await asyncio.sleep(cd)
+                            logging.info("尝试重新连接到服务器")
+                            continue
+                        else:
                             break
             except ConnectionRefusedError as e:
                 logging.exception(e)
@@ -142,6 +146,8 @@ class QWebsocket(WebsocketDriver):
                     return
                 self.count += 1
                 await asyncio.sleep(5)
+            finally:
+                self.session.close()
 
 
 
