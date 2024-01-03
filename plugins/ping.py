@@ -104,11 +104,16 @@ async def ping(api:QOpenApi,event: AtMessageEvent):
             with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
                 ip = json.load(file)['default']
         else:
-            if '.' in event.content.split(" ")[-1]:
-                ip = event.content.split(" ")[-1]
+            asking = event.content.split(" ")[-1]
+            if '.' in asking:
+                ip = asking
             else:
                 with open(f'data/{event.group_id}___server_ip.json', 'r') as file:
-                    ip = json.load(file)[event.content.split(" ")[-1]]
+                    try:
+                        ip = json.load(file)[asking]
+                    except:
+                        await api.send(event,message=f'没有找到关于{asking}的记录')
+                        return
         ret = await ping_ip(ip)
         await api.send(event,message=f'{ret}')
                 
