@@ -73,6 +73,6 @@ def main(is_bili: int):
     list_top = resolve_list_top(get_url_response(urls[0])["data"])
     list_by_last_rank = resolve_list_by_last_rank(get_url_response(urls[1])["data"])
 
-    return f'当前赛季:{resolve_season(get_lastest_season())}查询服务器：{"官服" if is_bili == 1 else "b服"}\n\n{list_top}\n{list_by_last_rank}'
+    return f'当前赛季:{resolve_season(get_lastest_season())}查询服务器：{"官服" if is_bili == 1 else "b服"}\n\n{list_top}\n{list_by_last_rank}\n数据来源: arona-icu'
 
 # print(main(2))
