@@ -40,6 +40,5 @@ async def mcwiki(api: QOpenApi,event: AtMessageEvent):
             logging.info('everything done')
             logging.info(f'{load_config("./imgserver.cfg")["host:port_for_tencent"]}img/{event.author["id"]}_mcwiki.jpg')
             await api.send_img(event,f'{load_config("./imgserver.cfg")["host:port_for_tencent"]}img/{event.author["id"]}_mcwiki.jpg')
-            await browser.close()
 
     return True
