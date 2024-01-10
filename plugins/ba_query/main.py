@@ -6,7 +6,7 @@ from .core import main
 
 @plugin
 async def ba_query(api:QOpenApi,event: AtMessageEvent):
-    if event.content.startswith("/ba_raid"):
+    if event.content.startswith("/ba"):
         print("asking for ba")
-        is_bili = 2 if event.content.find("-b") >= 8 else 1
+        is_bili = 2 if event.content.find("-b") >= 3 else 1
         print(await api.send(event, main(is_bili)))
