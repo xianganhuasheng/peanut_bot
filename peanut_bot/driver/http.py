@@ -16,7 +16,7 @@ class HTTPDriver:
         self.headers = headers
 
 
-    async def get_async(self,params: str or dict = None, suffix: str = "", **kwargs) -> dict:
+    async def get_async(self,params: str | dict = None, suffix: str = "", **kwargs) -> dict:
         if isinstance(params,dict):
             params = json.dumps(params)
         async with aiohttp.ClientSession(headers=self.headers, **kwargs) as client:
@@ -24,14 +24,17 @@ class HTTPDriver:
                 return await respond.json()
     
 
-    async def post_async(self,data: str or dict = None, suffix: str = "", **kwargs) -> dict:
+    async def post_async(self,data: str | dict = None, suffix: str = "", **kwargs) -> dict:
         if isinstance(data,dict):
             data = json.dumps(data)
         async with aiohttp.ClientSession(headers=self.headers, **kwargs) as client:
             async with client.post(data = data,url = f'{self.url}{suffix}') as respond:
-                return await respond.json()
+                try:
+                    return await respond.json()
+                except:
+                    return await respond.text()
 
-    def get_sync(self,params: str or dict = None, suffix: str = "", **kwargs) -> dict:
+    def get_sync(self,params: str | dict = None, suffix: str = "", **kwargs) -> dict:
         if isinstance(params,dict):
             params = json.dumps(params)
         return requests.get(f'{self.url}{"" if suffix is None else suffix}',
@@ -39,7 +42,7 @@ class HTTPDriver:
                             headers = self.headers,
                             **kwargs).json()
   
-    def post_sync(self,data: str or dict = None, suffix: str = "", **kwargs) -> dict:
+    def post_sync(self,data: str | dict = None, suffix: str = "", **kwargs) -> dict:
         if isinstance(data,dict):
             data = json.dumps(data)
         return requests.post(url = f'{self.url}{"" if suffix is None else suffix}',
@@ -54,6 +57,25 @@ class QOpenApi(HTTPDriver):
     tx每一段时间要更新一个access，不及时更新发不了东西
     使用hold_openapi维护与官方的OpenApi的Access
     '''
+
+    # _instance = None
+
+    # def __new__(cls, url: str, app_id: str, app_secret: str):
+    #     if cls._instance is None:
+    #         cls._instance = super(QOpenApi, cls).__new__(cls)
+    #         super().__init__(url, {'Content-Type': 'application/json'})
+    #         cls._instance.app_id = app_id
+    #         cls._instance.app_secret = app_secret
+    #         cls._instance.data = {
+    #             "appId": f"{cls._instance.app_id}",
+    #             "clientSecret": f"{cls._instance.app_secret}"
+    #         }
+    #         cls._instance.expires_in = 7200
+    #         cls._instance.access = None
+    #         cls._instance.driver = HTTPDriver('https://bots.qq.com/app/getAppAccessToken',  
+    #                                           {'Content-Type': 'application/json'})
+    #     return cls._instance
+
 
     def __init__(self,url: str,app_id: str,app_secret: str) -> None:
         super().__init__(url,{'Content-Type':'application/json'})        
@@ -183,6 +205,7 @@ class QOpenApi(HTTPDriver):
             rpl = await self.post_async(data,fix)
         logging.debug(rpl)
         return rpl
+
 
 class API:
     def __init__(self,api) -> None:

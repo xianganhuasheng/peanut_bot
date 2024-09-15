@@ -42,7 +42,7 @@ def load_plugin(directory: str = "plugins") -> None:
                     importlib.reload(sys.modules.get(module_path))
                 else:
                     importlib.import_module(module_path)
-                # print(f"Imported module: {module_path}")
+                # logging.info(f"Successfully imported module: {module_path}")
             except Exception as e:
                 logging.error(f"Failed to import module {module_path}: {e}")
 
